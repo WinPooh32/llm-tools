@@ -10,7 +10,7 @@ import (
 // Example: "1:package main\n".
 func AddNumbers(s string) string {
 	if s == "" {
-		return ""
+		return "1:"
 	}
 
 	ss := strings.Split(s, "\n")

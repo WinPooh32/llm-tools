@@ -2,18 +2,12 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
-	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/WinPooh32/llm-tools/tools/file/lines"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-)
-
-const (
-	escapesFromParentErr = "can only access files and directories beneath the current working directory"
 )
 
 type ReadInput struct {
@@ -22,33 +16,14 @@ type ReadInput struct {
 }
 
 func Read(ctx context.Context, _ *mcp.CallToolRequest, input ReadInput) (*mcp.CallToolResult, any, error) {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return nil, nil, fmt.Errorf("get current working directory: os: %w", err)
-	}
-
-	var rel string
-
-	if filepath.IsLocal(input.Path) {
-		rel = input.Path
-	} else {
-		rel, err = filepath.Rel(cwd, input.Path)
-		if err != nil {
-			return mcpErrorResult(escapesFromParentErr), nil, nil
-		}
-	}
-
-	file, err := os.OpenInRoot(cwd, rel)
-	if os.IsNotExist(err) {
-		return mcpErrorResult("file is not exist"), nil, nil
+	file, err := openFile(cwd, input.Path, true)
+	if errors.Is(err, errEscapesFromParent) {
+		return mcpErrorResult(escapesFromParentErr), nil, nil
 	}
 	if err != nil {
-		if strings.Contains(err.Error(), "path escapes from parent") {
-			return mcpErrorResult(escapesFromParentErr), nil, nil
-		}
-
-		return nil, nil, fmt.Errorf("open file: os.Root: %w", err)
+		return nil, nil, err
 	}
+	defer file.Close()
 
 	bs, err := io.ReadAll(file)
 	if err != nil {

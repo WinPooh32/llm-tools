@@ -36,7 +36,7 @@ func main() {
 	mcp.AddTool(server,
 		&mcp.Tool{
 			Name: "read",
-			Description: `Read file.
+			Description: `Read a file.
 Outputs text where every line has prefixed by it's number.
 Format: "<line_number>:<line_content>\n"
 Example:
@@ -45,6 +45,14 @@ Example:
 `,
 		},
 		Read,
+	)
+
+	mcp.AddTool(server,
+		&mcp.Tool{
+			Name:        "apply",
+			Description: `Apply changes to a text file`,
+		},
+		Apply,
 	)
 
 	if *httpAddr != "" {

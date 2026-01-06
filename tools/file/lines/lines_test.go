@@ -19,7 +19,7 @@ func TestAddNumbers(t *testing.T) {
 		args args
 		want string
 	}{
-		{"empty", args{s: ""}, ""},
+		{"empty", args{s: ""}, "1:"},
 		{"one line", args{s: "package main"}, "1:package main\n"},
 		{"one line with eol", args{s: "package main\n"}, "1:package main\n2:\n"},
 		{"multiple lines", args{s: "package main\nfunc main() {\n}\n"}, "1:package main\n2:func main() {\n3:}\n4:\n"},
