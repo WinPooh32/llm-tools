@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/WinPooh32/llm-tools/pkg/lines"
 	"github.com/WinPooh32/llm-tools/pkg/mcputil"
-	"github.com/WinPooh32/llm-tools/tools/file/lines"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 

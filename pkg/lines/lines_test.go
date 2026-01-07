@@ -3,7 +3,7 @@ package lines_test
 import (
 	"testing"
 
-	"github.com/WinPooh32/llm-tools/tools/file/lines"
+	"github.com/WinPooh32/llm-tools/pkg/lines"
 	"github.com/stretchr/testify/assert"
 )
 
