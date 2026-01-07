@@ -10,23 +10,6 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
-func mcpTextResult(s string) *mcp.CallToolResult {
-	return &mcp.CallToolResult{
-		Content: []mcp.Content{
-			&mcp.TextContent{Text: s},
-		},
-	}
-}
-
-func mcpErrorResult(s string) *mcp.CallToolResult {
-	return &mcp.CallToolResult{
-		Content: []mcp.Content{
-			&mcp.TextContent{Text: s},
-		},
-		IsError: true,
-	}
-}
-
 func main() {
 	httpAddr := flag.String("http", "", "if set, use streamable HTTP at this address, instead of stdin/stdout")
 	flag.Parse()

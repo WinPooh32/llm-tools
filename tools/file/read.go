@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/WinPooh32/llm-tools/pkg/mcputil"
 	"github.com/WinPooh32/llm-tools/tools/file/lines"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
@@ -18,7 +19,7 @@ type ReadInput struct {
 func Read(ctx context.Context, _ *mcp.CallToolRequest, input ReadInput) (*mcp.CallToolResult, any, error) {
 	file, err := openFile(cwd, input.Path, true)
 	if errors.Is(err, errEscapesFromParent) {
-		return mcpErrorResult(escapesFromParentErr), nil, nil
+		return mcputil.ErrorResult(escapesFromParentErr), nil, nil
 	}
 	if err != nil {
 		return nil, nil, err
@@ -31,8 +32,8 @@ func Read(ctx context.Context, _ *mcp.CallToolRequest, input ReadInput) (*mcp.Ca
 	}
 
 	if input.DisableLines != nil && *input.DisableLines {
-		return mcpTextResult(string(bs)), nil, nil
+		return mcputil.TextResult(string(bs)), nil, nil
 	}
 
-	return mcpTextResult(lines.AddNumbers(string(bs))), nil, nil
+	return mcputil.TextResult(lines.AddNumbers(string(bs))), nil, nil
 }

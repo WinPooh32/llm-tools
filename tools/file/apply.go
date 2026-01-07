@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/WinPooh32/llm-tools/pkg/mcputil"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
@@ -21,7 +22,7 @@ type ApplyInput struct {
 func Apply(ctx context.Context, _ *mcp.CallToolRequest, input ApplyInput) (*mcp.CallToolResult, any, error) {
 	file, err := openFile(cwd, input.Path, false)
 	if errors.Is(err, errEscapesFromParent) {
-		return mcpErrorResult(escapesFromParentErr), nil, nil
+		return mcputil.ErrorResult(escapesFromParentErr), nil, nil
 	}
 	if err != nil {
 		return nil, nil, err
@@ -53,7 +54,7 @@ func Apply(ctx context.Context, _ *mcp.CallToolRequest, input ApplyInput) (*mcp.
 		return nil, nil, fmt.Errorf("close file: %w", err)
 	}
 
-	return mcpTextResult("OK"), nil, nil
+	return mcputil.TextResult("OK"), nil, nil
 }
 
 func applyLines(lines, newLines []string, begin, end int) []string {
