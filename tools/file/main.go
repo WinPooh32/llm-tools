@@ -32,8 +32,9 @@ Example:
 
 	mcp.AddTool(server,
 		&mcp.Tool{
-			Name:        "apply",
-			Description: `Apply changes to a text file`,
+			Name: "apply",
+			Description: `Apply changes to a text file.
+If you want to insert content before specific line, begin and end lines must be equal.`,
 		},
 		Apply,
 	)
