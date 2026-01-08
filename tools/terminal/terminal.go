@@ -12,16 +12,16 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
-type CommandInput struct {
+type RunCommandInput struct {
 	Command string `json:"command" jsonschema:"command with argumets"`
 }
 
-type CommandOutput struct {
+type RunCommandOutput struct {
 	ExitStatus int    `json:"exit_status" jsonschema:"exit status code of the command"`
 	Output     string `json:"output"      jsonschema:"command output"`
 }
 
-func Terminal(ctx context.Context, _ *mcp.CallToolRequest, input CommandInput) (*mcp.CallToolResult, any, error) {
+func RunCommand(ctx context.Context, _ *mcp.CallToolRequest, input RunCommandInput) (*mcp.CallToolResult, any, error) {
 	command := strings.TrimSpace(input.Command)
 
 	if len(command) == 0 {
@@ -66,7 +66,7 @@ func Terminal(ctx context.Context, _ *mcp.CallToolRequest, input CommandInput) (
 		exitCode = cmd.ProcessState.ExitCode()
 	}
 
-	return nil, &CommandOutput{
+	return nil, &RunCommandOutput{
 		ExitStatus: exitCode,
 		Output:     string(output),
 	}, nil

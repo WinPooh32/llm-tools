@@ -39,17 +39,17 @@ func main() {
 	var description string
 
 	if len(allowedCommands) > 0 {
-		description = "Exec one of these allowed commands: " + allowedCommands.String()
+		description = "Run one of allowed terminal commands: " + allowedCommands.String()
 	} else {
-		description = "Exec command"
+		description = "Run terminal command"
 	}
 
 	mcp.AddTool(server,
 		&mcp.Tool{
-			Name:        "terminal",
+			Name:        "run_command",
 			Description: description,
 		},
-		Terminal,
+		RunCommand,
 	)
 
 	if *httpAddr != "" {
