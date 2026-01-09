@@ -34,7 +34,12 @@ Example:
 		&mcp.Tool{
 			Name: "apply",
 			Description: `Apply changes to a text file.
-If you want to insert content before specific line, begin and end lines must be equal.`,
+
+Line parameters are 1-indexed.
+
+If begin_line == end_line, content is inserted at that line.
+If begin_line < end_line, the lines between (inclusive) are replaced with content.
+`,
 		},
 		Apply,
 	)
