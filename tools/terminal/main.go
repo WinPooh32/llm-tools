@@ -39,14 +39,14 @@ func main() {
 	var description string
 
 	if len(allowedCommands) > 0 {
-		description = "Run one of allowed terminal commands: " + allowedCommands.String()
+		description = "Run one of allowed executables: " + allowedCommands.String()
 	} else {
-		description = "Run terminal command"
+		description = "Run executable"
 	}
 
 	mcp.AddTool(server,
 		&mcp.Tool{
-			Name:        "run_command",
+			Name:        "exec",
 			Description: description,
 		},
 		RunCommand,

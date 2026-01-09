@@ -15,7 +15,7 @@ import (
 )
 
 type RunCommandInput struct {
-	Command string `json:"command" jsonschema:"command with argumets"`
+	Command string `json:"command" jsonschema:"single command/executable with argumets"`
 }
 
 func RunCommand(ctx context.Context, _ *mcp.CallToolRequest, input RunCommandInput) (*mcp.CallToolResult, any, error) {
