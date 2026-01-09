@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"unicode"
 
 	"github.com/WinPooh32/llm-tools/pkg/mcputil"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -24,11 +25,7 @@ func RunCommand(ctx context.Context, _ *mcp.CallToolRequest, input RunCommandInp
 		return mcputil.ErrorResult("failed to exec empty command"), nil, nil
 	}
 
-	parts := strings.Split(command, " ")
-
-	for i, v := range parts {
-		parts[i] = strings.TrimSpace(v)
-	}
+	parts := explodeCommand(command)
 
 	var (
 		argc string
@@ -69,4 +66,57 @@ func RunCommand(ctx context.Context, _ *mcp.CallToolRequest, input RunCommandInp
 	}
 
 	return mcputil.TextResult(outputStr), nil, nil
+}
+
+func explodeCommand(command string) (parts []string) {
+	var (
+		quotedString bool
+		escaped      bool
+	)
+
+	parts = strings.FieldsFunc(command, func(r rune) bool {
+		if quotedString {
+			if r == '"' {
+				if escaped {
+					escaped = false
+					return false
+				}
+
+				quotedString = false
+				return false
+			}
+
+			return false
+		}
+
+		if r == '"' {
+			quotedString = true
+			return false
+		}
+
+		if r == '\\' {
+			escaped = true
+			return false
+		}
+
+		if escaped {
+			escaped = false
+		}
+
+		return unicode.IsSpace(r)
+	})
+
+	for i, v := range parts {
+		if !strings.HasPrefix(v, `"`) {
+			continue
+		}
+
+		v = strings.ReplaceAll(v, `\"`, `"`)
+		v = strings.TrimPrefix(v, `"`)
+		v = strings.TrimSuffix(v, `"`)
+
+		parts[i] = v
+	}
+
+	return parts
 }
