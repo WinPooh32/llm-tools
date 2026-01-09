@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os/exec"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/WinPooh32/llm-tools/pkg/mcputil"
@@ -14,11 +15,6 @@ import (
 
 type RunCommandInput struct {
 	Command string `json:"command" jsonschema:"command with argumets"`
-}
-
-type RunCommandOutput struct {
-	ExitStatus int    `json:"exit_status" jsonschema:"exit status code of the command"`
-	Output     string `json:"output"      jsonschema:"command output"`
 }
 
 func RunCommand(ctx context.Context, _ *mcp.CallToolRequest, input RunCommandInput) (*mcp.CallToolResult, any, error) {
@@ -66,8 +62,11 @@ func RunCommand(ctx context.Context, _ *mcp.CallToolRequest, input RunCommandInp
 		exitCode = cmd.ProcessState.ExitCode()
 	}
 
-	return nil, &RunCommandOutput{
-		ExitStatus: exitCode,
-		Output:     string(output),
-	}, nil
+	outputStr := string(output)
+
+	if exitCode != 0 {
+		outputStr += "\n\nExit Code status: " + strconv.Itoa(exitCode)
+	}
+
+	return mcputil.TextResult(outputStr), nil, nil
 }
