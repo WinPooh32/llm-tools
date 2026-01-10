@@ -34,7 +34,11 @@ func Apply(ctx context.Context, _ *mcp.CallToolRequest, input ApplyInput) (*mcp.
 	}
 
 	srcLines := strings.Split(string(bs), "\n")
-	editLines := strings.Split(input.Content, "\n")
+
+	var editLines []string
+	if input.Content != nil {
+		editLines = strings.Split(*input.Content, "\n")
+	}
 
 	newLines := applyLines(srcLines, editLines, input.Begin-1, input.End-1)
 
