@@ -7,6 +7,8 @@ import (
 )
 
 func Test_applyLines(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name     string
 		lines    []string
@@ -66,6 +68,7 @@ func Test_applyLines(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			got := applyLines(tt.lines, tt.newLines, tt.begin, tt.end)
 			assert.Equal(t, tt.want, got)
 		})
