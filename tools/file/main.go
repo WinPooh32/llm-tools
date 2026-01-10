@@ -37,8 +37,10 @@ Example:
 
 Line parameters are 1-indexed.
 
-If begin_line == end_line, content is inserted at that line.
-If begin_line < end_line, the lines between (inclusive) are replaced with content.
+Examples:
+- To insert a new line at line 5: begin_line=5, end_line=5, content="new line content\n"
+- To replace lines 3-7 with new content: begin_line=3, end_line=8, content="new line 1\nnew line 2\n..."
+- To delete lines 10-15: begin_line=10, end_line=16, content=null
 `,
 		},
 		Apply,

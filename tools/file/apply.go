@@ -13,10 +13,10 @@ import (
 )
 
 type ApplyInput struct {
-	Path    string `json:"path"       jsonschema:"path to the file"`
-	Begin   int    `json:"begin_line" jsonschema:"begin line number of the edit selection"`
-	End     int    `json:"end_line"   jsonschema:"end line number of the edit selection"`
-	Content string `json:"content"    jsonschema:"text content that will be applied to the selected region"`
+	Path    string  `json:"path"       jsonschema:"path to the file"`
+	Begin   int     `json:"begin_line" jsonschema:"begin line number of the edit selection"`
+	End     int     `json:"end_line"   jsonschema:"end line number of the edit selection"`
+	Content *string `json:"content"    jsonschema:"text content that will be applied to the selected region"`
 }
 
 func Apply(ctx context.Context, _ *mcp.CallToolRequest, input ApplyInput) (*mcp.CallToolResult, any, error) {
