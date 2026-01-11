@@ -35,12 +35,12 @@ Example:
 			Name: "apply",
 			Description: `Apply changes to a text file.
 
-Line parameters are 1-indexed.
+Line numbers are 1-indexed (first line is line 1).
 
-Examples:
-- To insert a new line at line 5: begin_line=5, end_line=5, content="new line content\n"
-- To replace lines 3-7 with new content: begin_line=3, end_line=8, content="new line 1\nnew line 2\n..."
-- To delete lines 10-15: begin_line=10, end_line=16, content=null
+Usage examples:
+- Insert a new line at line 5: begin_line: 5, end_line: 5, content: "new line content\n"
+- Replace lines 3-7 with new content: begin_line: 3, end_line: 7, content: "new line 1\nnew line 2\n..."
+- Delete lines 10-15: begin_line: 10, end_line: 15, content: null
 `,
 		},
 		Apply,

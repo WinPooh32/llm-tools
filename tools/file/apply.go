@@ -36,11 +36,18 @@ func Apply(ctx context.Context, _ *mcp.CallToolRequest, input ApplyInput) (*mcp.
 	srcLines := strings.Split(string(bs), "\n")
 
 	var editLines []string
-	if input.Content != nil {
+	if input.Content != nil || (input.Content != nil && len(*input.Content) > 0) {
 		editLines = strings.Split(*input.Content, "\n")
 	}
 
-	newLines := applyLines(srcLines, editLines, input.Begin-1, input.End-1)
+	var newLines []string
+	if input.Content == nil && input.Begin == input.End {
+		newLines = applyLines(srcLines, editLines, input.Begin-1, input.End)
+	} else if input.Begin == input.End {
+		newLines = applyLines(srcLines, editLines, input.Begin-1, input.Begin-1)
+	} else {
+		newLines = applyLines(srcLines, editLines, input.Begin-1, input.End)
+	}
 
 	if err := file.Truncate(0); err != nil {
 		return nil, nil, fmt.Errorf("truncate file: %w", err)
