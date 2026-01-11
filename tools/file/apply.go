@@ -13,10 +13,37 @@ import (
 )
 
 type ApplyInput struct {
-	Path    string  `json:"path"       jsonschema:"path to the file"`
-	Begin   int     `json:"begin_line" jsonschema:"begin line number of the edit selection"`
-	End     int     `json:"end_line"   jsonschema:"end line number of the edit selection"`
-	Content *string `json:"content"    jsonschema:"text content that will be applied to the selected region"`
+	Path      string        `json:"path"     jsonschema:"path to the file"`
+	Postition ApplyPosition `json:"position" jsonschema:"edit position"`
+	Content   *string       `json:"content"  jsonschema:"text content"`
+}
+
+func (ai *ApplyInput) IsDelete() bool {
+	return ai.Content == nil
+}
+
+func (ai *ApplyInput) IsInsert() bool {
+	return ai.Postition.End == nil
+}
+
+func (ai *ApplyInput) IsReplace() bool {
+	return ai.Postition.End != nil
+}
+
+func (ai *ApplyInput) Begin() int {
+	return ai.Postition.Begin - 1
+}
+
+func (ai *ApplyInput) End() int {
+	if ai.Postition.End == nil {
+		return -1
+	}
+	return *ai.Postition.End
+}
+
+type ApplyPosition struct {
+	Begin int  `json:"begin"         jsonschema:"begin line number of the range"`
+	End   *int `json:"end,omitempty" jsonschema:"end (inclusive) line number of the range"`
 }
 
 func Apply(ctx context.Context, _ *mcp.CallToolRequest, input ApplyInput) (*mcp.CallToolResult, any, error) {
@@ -36,17 +63,19 @@ func Apply(ctx context.Context, _ *mcp.CallToolRequest, input ApplyInput) (*mcp.
 	srcLines := strings.Split(string(bs), "\n")
 
 	var editLines []string
-	if input.Content != nil || (input.Content != nil && len(*input.Content) > 0) {
+	if input.Content != nil && len(*input.Content) > 0 {
 		editLines = strings.Split(*input.Content, "\n")
 	}
 
 	var newLines []string
-	if input.Content == nil && input.Begin == input.End {
-		newLines = applyLines(srcLines, editLines, input.Begin-1, input.End)
-	} else if input.Begin == input.End {
-		newLines = applyLines(srcLines, editLines, input.Begin-1, input.Begin-1)
-	} else {
-		newLines = applyLines(srcLines, editLines, input.Begin-1, input.End)
+
+	switch {
+	case input.IsDelete():
+		newLines = applyLines(srcLines, nil, input.Begin(), input.End())
+	case input.IsInsert():
+		newLines = applyLines(srcLines, editLines, input.Begin(), -1)
+	case input.IsReplace():
+		newLines = applyLines(srcLines, editLines, input.Begin(), input.End())
 	}
 
 	if err := file.Truncate(0); err != nil {
@@ -65,20 +94,21 @@ func Apply(ctx context.Context, _ *mcp.CallToolRequest, input ApplyInput) (*mcp.
 		return nil, nil, fmt.Errorf("close file: %w", err)
 	}
 
-	return mcputil.TextResult("OK"), nil, nil
+	return mcputil.TextResult("SUCCESS\nLine numbers have been changed!"), nil, nil
 }
 
 func applyLines(lines, newLines []string, begin, end int) []string {
-	if end < begin {
+	if begin < 0 {
 		return lines
 	}
-
-	if begin >= len(lines) {
+	if begin > len(lines) {
 		begin = len(lines)
 	}
-
-	if end > len(lines) {
+	if end > len(lines) || end < 0 {
 		end = len(lines)
+	}
+	if end < begin {
+		return lines
 	}
 
 	return slices.Concat(lines[:begin], newLines, lines[end:])

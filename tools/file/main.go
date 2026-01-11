@@ -38,9 +38,9 @@ Example:
 Line numbers are 1-indexed (first line is line 1).
 
 Usage examples:
-- Insert a new line at line 5: begin_line: 5, end_line: 5, content: "new line content\n"
-- Replace lines 3-7 with new content: begin_line: 3, end_line: 7, content: "new line 1\nnew line 2\n..."
-- Delete lines 10-15: begin_line: 10, end_line: 15, content: null
+- Insert a new line at line 5: content: "new line content", position: {begin: 5, end: 5}
+- Replace lines 3-7 with new text: content: "new line 1\nnew line 2", position: {begin: 3, end: 7}
+- Delete lines 10-15: content: null, position: {begin: 10, end: 15}
 `,
 		},
 		Apply,
